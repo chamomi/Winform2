@@ -15,36 +15,21 @@ namespace WinForms2
     {
         int n = 8;
         Color[,] bgColors;
-        //private Splash splashScreen;
-        ToolStripMenuItem left;//, gr, w;
+        ToolStripMenuItem left;
         public Form1()
         {
-            //SplashScreen();
+            Splash.Show(3000);
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             bgColors = new Color[n, n];
             newGameToolStripMenuItem.PerformClick();
         }
 
-        //private void SplashScreen()
-        //{
-        //    splashScreen = new Splash();
-        //    Thread thread = new Thread(new ThreadStart(SplashStart));
-        //    thread.Start();
-
-        //    Thread.Sleep(3000);
-
-        //    thread.Abort();
-        //}
-
-        //private void SplashStart()
-        //{
-        //    Application.Run(splashScreen);
-        //}
-
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            Splash.Hide();
+            Show();
+            Activate();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)

@@ -13,78 +13,108 @@ namespace WinForms2
 {
     public partial class Splash : Form
     {
-        // Threading
-        private static Splash ms_frmSplash = null;
-        private static Thread ms_oThread = null;
-
-        // Fade in and out.
-        private double m_dblOpacityIncrement = .05;
-        private double m_dblOpacityDecrement = .08;
-        private const int TIMER_INTERVAL = 50;
-
-        public Splash()
-        {
-            InitializeComponent();
-            FormBorderStyle = FormBorderStyle.None;
-            this.Opacity = 0.0;
-            timer1.Interval = TIMER_INTERVAL;
-            timer1.Start();
-            //this.ClientSize = this.BackgroundImage.Size;
-        }
 
         private void Splash_Load(object sender, EventArgs e)
         {
 
         }
 
-        static public void ShowSplash()
+        ////http://stackoverflow.com/questions/1364115/a-different-requirement-for-a-splash-screen-in-winforms-app  
+        public static void Show(int fadeTimeInMilliseconds)
         {
-            // Make sure it's only launched once.
-            if (ms_frmSplash != null)
-                return;
-            ms_oThread = new Thread(new ThreadStart(Splash.ShowForm));
-            ms_oThread.IsBackground = true;
-            ms_oThread.SetApartmentState(ApartmentState.STA);
-            ms_oThread.Start();
-            while (ms_frmSplash == null || ms_frmSplash.IsHandleCreated == false)
+            if (_instance == null)
             {
-                System.Threading.Thread.Sleep(TIMER_INTERVAL);
+                _fadeTime = fadeTimeInMilliseconds;
+                _instance = new Splash();
+
+                _instance.Opacity = 0;
+                ((Form)_instance).Show();
+
+                Application.DoEvents();
+
+                if (_fadeTime > 0)
+                {
+                    int fadeStep = (int)Math.Round((double)_fadeTime / 40);
+                    _instance.timer1.Interval = fadeStep;
+                    double step = 0.05;
+                    for (int ii = 0; ii <= _fadeTime/2; ii += fadeStep)
+                    {
+                        Thread.Sleep(fadeStep);
+                        _instance.Opacity += step;
+                    }
+                    step = -0.05;
+                    for (int ii = _fadeTime / 2; ii <= _fadeTime; ii += fadeStep)
+                    {
+                        Thread.Sleep(fadeStep);
+                        _instance.Opacity += step;
+                    }
+                }
+                else
+                {
+                    _instance.timer1.Tag = new object();
+                }
+
+                _instance.Opacity = 1;
             }
         }
 
-        static private void ShowForm()
+        public new static void Hide()
         {
-            ms_frmSplash = new Splash();
-            Application.Run(ms_frmSplash);
-        }
-
-        static public void CloseForm()
-        {
-            if (ms_frmSplash != null)
+            if (_instance != null)
             {
-                // Make it start going away.
-                ms_frmSplash.m_dblOpacityIncrement = -ms_frmSplash.m_dblOpacityDecrement;
+                _instance.BeginInvoke(new MethodInvoker(_instance.Close));
+
+                Application.DoEvents();
             }
-            ms_oThread = null;  // we do not need these any more.
-            ms_frmSplash = null;
-            //ms_frmSplash.Close();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        public Splash()
         {
-            if (m_dblOpacityIncrement > 0)
-            {
-                if (this.Opacity < 1)
+            InitializeComponent();
+            FormBorderStyle = FormBorderStyle.None;
+        }
 
-                    this.Opacity += m_dblOpacityIncrement;
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            if (Application.OpenForms.Count > 1)
+            {
+                if (Opacity > 0)
+                {
+                    Opacity -= 0.05;
+                    timer1.Start();
+                }
+                else
+                {
+                    timer1.Stop();
+                    e.Cancel = false;
+                    _instance = null;
+                }
             }
             else
             {
-                if (this.Opacity > 0)
-                    this.Opacity += m_dblOpacityIncrement;
+                if (Opacity > 0)
+                {
+                    Thread.Sleep(timer1.Interval);
+                    Opacity -= 0.05;
+                    Close();
+                }
                 else
-                    this.Close();
+                {
+                    e.Cancel = false;
+                    _instance = null;
+                }
             }
         }
+
+        private void OnTick(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private static Splash _instance = null;
+        private static int _fadeTime = 0;
+
     }
 }
+
