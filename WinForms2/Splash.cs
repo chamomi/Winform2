@@ -8,11 +8,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace WinForms2
 {
     public partial class Splash : Form
     {
+        public Splash()
+        {
+            InitializeComponent();
+            FormBorderStyle = FormBorderStyle.None;
+
+            GraphicsPath path = new GraphicsPath();
+            path.AddEllipse(new Rectangle(0, 0, 300, 300));
+            Region = new Region(path);
+        }
 
         private void Splash_Load(object sender, EventArgs e)
         {
@@ -66,12 +76,6 @@ namespace WinForms2
 
                 Application.DoEvents();
             }
-        }
-
-        public Splash()
-        {
-            InitializeComponent();
-            FormBorderStyle = FormBorderStyle.None;
         }
 
         protected override void OnClosing(CancelEventArgs e)
