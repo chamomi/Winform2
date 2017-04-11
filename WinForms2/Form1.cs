@@ -325,6 +325,14 @@ namespace WinForms2
             }
         }
 
+        private void tableLayoutPanel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                //edit mode right click
+            }
+        }
+
         public int getColumn(Point point)
         {
             int w = tableLayoutPanel1.Width;
