@@ -24,7 +24,7 @@ namespace WinForms2
         private int door_y = 0;
         private bool reversed = false, opened = false, iskey = true;
         private Point editclickpos;
-        ContextMenuStrip cm;// = new ContextMenuStrip();
+        ContextMenuStrip cm;
         public Form1()
         {
             Splash.Show(3000);
@@ -32,13 +32,6 @@ namespace WinForms2
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             bgColors = new Color[n, n];
             KeyDown += new KeyEventHandler(Form1_KeyPress);
-            //cm.Items.Add("Knight");
-            //cm.Items.Add("Key");
-            //cm.Items.Add("Door");
-            //cm.Items[0].Click += new EventHandler(editKnight_Click);
-            //cm.Items[1].Click += new EventHandler(editKey_Click);
-            //cm.Items[2].Click += new EventHandler(editDoor_Click);
-            //tableLayoutPanel1.ContextMenuStrip = cm;
             newGameToolStripMenuItem.PerformClick();
         }
 

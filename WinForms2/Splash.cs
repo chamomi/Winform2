@@ -19,7 +19,7 @@ namespace WinForms2
         {
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.None;
-            //this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Splash_MouseDown);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Splash_MouseDown);
 
             GraphicsPath path = new GraphicsPath();
             path.AddEllipse(new Rectangle(0, 0, 300, 300));
