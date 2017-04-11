@@ -16,19 +16,127 @@ namespace WinForms2
         int n = 8;
         Color[,] bgColors;
         ToolStripMenuItem left;
+        Bitmap knightImage;
+        Bitmap reversedKnightImage;
+        Bitmap keyImage;
+        Bitmap openDoorImage;
+        Bitmap closedDoorImage;
+        private int knight_x = 0;
+        private int knight_y = 0;
+        private int key_x = 0;
+        private int key_y = 0;
+        private int door_x = 0;
+        private int door_y = 0;
+        private bool reversed = false, opened = false, iskey = true;
         public Form1()
         {
             Splash.Show(3000);
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             bgColors = new Color[n, n];
+            KeyDown += new KeyEventHandler(Form1_KeyPress);
+            
             newGameToolStripMenuItem.PerformClick();
+        }
+
+        private void Form1_KeyPress(object sender, KeyEventArgs e)
+        {
+            if (editModeToolStripMenuItem.Text == "Edit mode")
+            {
+                Point kp = new Point(knight_x, knight_y);
+                Point keyp = new Point(key_x, key_y);
+                Point dp = new Point(door_x, door_y);
+                switch (e.KeyValue)
+                {
+                    case (char)Keys.Up:
+                        if (knight_y > 0) kp = new Point(knight_x, knight_y-1);
+                        if ((knight_y>0)&&(bgColors[knight_x, knight_y - 1] == Color.ForestGreen))
+                            if((opened== true)||(dp!=kp)) knight_y--;
+                        if((knight_x==key_x)&&(knight_y==key_y))
+                        {
+                            opened = true;
+                            iskey = false;
+                        }
+                        if ((knight_x == door_x) && (knight_y == door_y))
+                        {
+                            newGameToolStripMenuItem.PerformClick();
+                        }
+                        break;
+                    case (char)Keys.Right:
+                        reversed = false;
+                        if (knight_x < (n - 1)) kp = new Point(knight_x+1, knight_y);
+                        if ((knight_x< (n-1))&&(bgColors[knight_x + 1, knight_y] == Color.ForestGreen))
+                            if ((opened == true) || (dp != kp)) knight_x++;
+                        if ((knight_x == key_x) && (knight_y == key_y))
+                        {
+                            opened = true;
+                            iskey = false;
+                        }
+                        if ((knight_x == door_x) && (knight_y == door_y))
+                        {
+                            newGameToolStripMenuItem.PerformClick();
+                        }
+                        break;
+                    case (char)Keys.Down:
+                        if (knight_y < (n - 1)) kp = new Point(knight_x, knight_y+1);
+                        if ((knight_y<(n-1))&&(bgColors[knight_x, knight_y + 1] == Color.ForestGreen))
+                            if ((opened == true) || (dp != kp)) knight_y++;
+                        if ((knight_x == key_x) && (knight_y == key_y))
+                        {
+                            opened = true;
+                            iskey = false;
+                        }
+                        if ((knight_x == door_x) && (knight_y == door_y))
+                        {
+                            newGameToolStripMenuItem.PerformClick();
+                        }
+                        break;
+                    case (char)Keys.Left:
+                        reversed = true;
+                        if (knight_x > 0) kp = new Point(knight_x-1, knight_y);
+                        if ((knight_x>0)&&(bgColors[knight_x - 1, knight_y] == Color.ForestGreen))
+                            if ((opened == true) || (dp != kp)) knight_x--;
+                        if ((knight_x == key_x) && (knight_y == key_y))
+                        {
+                            opened = true;
+                            iskey = false;
+                        }
+                        if ((knight_x == door_x) && (knight_y == door_y))
+                        {
+                            newGameToolStripMenuItem.PerformClick();
+                        }
+                        break;
+                    case (char)Keys.Space:
+                        if (knight_x - 1 >= 0) bgColors[knight_x - 1, knight_y] = Color.ForestGreen;
+                        if (knight_x + 1 < n) bgColors[knight_x + 1, knight_y] = Color.ForestGreen;
+                        if (knight_y + 1 < n) bgColors[knight_x, knight_y + 1] = Color.ForestGreen;
+                        if (knight_y - 1 >=0) bgColors[knight_x, knight_y - 1] = Color.ForestGreen;
+                        break;
+                }
+
+                tableLayoutPanel1.Invalidate();
+            }
+        }
+
+        public void LoadStaticFiles()
+        {
+            knightImage = Properties.Resources.knight;
+            reversedKnightImage = Properties.Resources.knight2;
+            keyImage = Properties.Resources.key2;
+            openDoorImage = Properties.Resources.opened_door;
+            closedDoorImage = Properties.Resources.closed_door;
+            knightImage.MakeTransparent();
+            reversedKnightImage.MakeTransparent();
+            keyImage.MakeTransparent();
+            openDoorImage.MakeTransparent();
+            closedDoorImage.MakeTransparent();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             Splash.Hide();
             Show();
+            LoadStaticFiles();
             Activate();
         }
 
@@ -90,6 +198,9 @@ namespace WinForms2
         {
             Random r = new Random();
             int a;
+            reversed = false;
+            opened = false;
+            iskey = true;
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < n; j++)
@@ -105,6 +216,36 @@ namespace WinForms2
                     }
                 }
             }
+            while(true)
+            {
+                int i = r.Next(0, n),j = r.Next(0, n);
+                if (bgColors[i, j]==Color.ForestGreen)
+                {
+                    knight_x = i;
+                    knight_y = j;
+                    break;
+                }
+            }
+            while (true)
+            {
+                int i = r.Next(0, n), j = r.Next(0, n);
+                if ((bgColors[i, j] == Color.ForestGreen)&&(i!=knight_x)&&(j!=knight_y))
+                {
+                    key_x = i;
+                    key_y = j;
+                    break;
+                }
+            }
+            while (true)
+            {
+                int i = r.Next(0, n), j = r.Next(0, n);
+                if ((bgColors[i, j] == Color.ForestGreen) && (i != knight_x) && (j != knight_y)&& (i != key_x) && (j != key_y))
+                {
+                    door_x = i;
+                    door_y = j;
+                    break;
+                }
+            }
             tableLayoutPanel1.Refresh();
 
         }
@@ -114,6 +255,24 @@ namespace WinForms2
             using (var b = new SolidBrush(bgColors[e.Column, e.Row]))
             {
                 e.Graphics.FillRectangle(b, e.CellBounds);
+            }
+            if (e.Column == knight_x && e.Row == knight_y && reversed == false)
+            {
+                e.Graphics.DrawImageUnscaledAndClipped(Properties.Resources.knight, e.CellBounds);
+            }
+            if (e.Column == knight_x && e.Row == knight_y && reversed == true)
+            {
+                e.Graphics.DrawImageUnscaledAndClipped(Properties.Resources.knight2, e.CellBounds);
+            }
+            if (e.Column == key_x && e.Row == key_y && iskey == true)
+                e.Graphics.DrawImageUnscaledAndClipped(Properties.Resources.key2, e.CellBounds);
+            if (e.Column == door_x && e.Row == door_y && opened == true)
+            {
+                e.Graphics.DrawImageUnscaledAndClipped(Properties.Resources.opened_door, e.CellBounds);
+            }
+            if (e.Column == door_x && e.Row == door_y && opened == false)
+            {
+                e.Graphics.DrawImageUnscaledAndClipped(Properties.Resources.closed_door, e.CellBounds);
             }
         }
 
@@ -157,10 +316,13 @@ namespace WinForms2
 
         private void tableLayoutPanel1_MouseClick(object sender, EventArgs e)
         {
-            Point p = tableLayoutPanel1.PointToClient(Cursor.Position);
-            if (((ToolStripMenuItem)left.DropDownItems[0]).Checked == true) bgColors[getColumn(p), getRow(p)] = Color.ForestGreen;
-            if (((ToolStripMenuItem)left.DropDownItems[1]).Checked == true) bgColors[getColumn(p), getRow(p)] = Color.Maroon;
-            tableLayoutPanel1.Refresh();
+            if (editModeToolStripMenuItem.Text == "Game mode")
+            {
+                Point p = tableLayoutPanel1.PointToClient(Cursor.Position);
+                if (((ToolStripMenuItem)left.DropDownItems[0]).Checked == true) bgColors[getColumn(p), getRow(p)] = Color.ForestGreen;
+                if (((ToolStripMenuItem)left.DropDownItems[1]).Checked == true) bgColors[getColumn(p), getRow(p)] = Color.Maroon;
+                tableLayoutPanel1.Refresh();
+            }
         }
 
         public int getColumn(Point point)

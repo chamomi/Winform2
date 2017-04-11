@@ -36,11 +36,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Sitka Small", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label1.Location = new System.Drawing.Point(49, 126);
+            this.label1.Location = new System.Drawing.Point(54, 126);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(196, 48);
+            this.label1.Size = new System.Drawing.Size(172, 37);
             this.label1.TabIndex = 0;
             this.label1.Text = "The Knight";
             this.label1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Splash_MouseDown);
