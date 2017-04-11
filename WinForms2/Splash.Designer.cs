@@ -43,7 +43,7 @@
             this.label1.Size = new System.Drawing.Size(172, 37);
             this.label1.TabIndex = 0;
             this.label1.Text = "The Knight";
-            this.label1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Splash_MouseDown);
+            //this.label1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Splash_MouseDown);
             // 
             // Splash
             // 
@@ -60,7 +60,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Splash";
             this.Load += new System.EventHandler(this.Splash_Load);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Splash_MouseDown);
+            //this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Splash_MouseDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -16,11 +16,6 @@ namespace WinForms2
         int n = 8;
         Color[,] bgColors;
         ToolStripMenuItem left;
-        Bitmap knightImage;
-        Bitmap reversedKnightImage;
-        Bitmap keyImage;
-        Bitmap openDoorImage;
-        Bitmap closedDoorImage;
         private int knight_x = 0;
         private int knight_y = 0;
         private int key_x = 0;
@@ -28,6 +23,8 @@ namespace WinForms2
         private int door_x = 0;
         private int door_y = 0;
         private bool reversed = false, opened = false, iskey = true;
+        private Point editclickpos;
+        ContextMenuStrip cm;// = new ContextMenuStrip();
         public Form1()
         {
             Splash.Show(3000);
@@ -35,7 +32,13 @@ namespace WinForms2
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             bgColors = new Color[n, n];
             KeyDown += new KeyEventHandler(Form1_KeyPress);
-            
+            //cm.Items.Add("Knight");
+            //cm.Items.Add("Key");
+            //cm.Items.Add("Door");
+            //cm.Items[0].Click += new EventHandler(editKnight_Click);
+            //cm.Items[1].Click += new EventHandler(editKey_Click);
+            //cm.Items[2].Click += new EventHandler(editDoor_Click);
+            //tableLayoutPanel1.ContextMenuStrip = cm;
             newGameToolStripMenuItem.PerformClick();
         }
 
@@ -118,25 +121,10 @@ namespace WinForms2
             }
         }
 
-        public void LoadStaticFiles()
-        {
-            knightImage = Properties.Resources.knight;
-            reversedKnightImage = Properties.Resources.knight2;
-            keyImage = Properties.Resources.key2;
-            openDoorImage = Properties.Resources.opened_door;
-            closedDoorImage = Properties.Resources.closed_door;
-            knightImage.MakeTransparent();
-            reversedKnightImage.MakeTransparent();
-            keyImage.MakeTransparent();
-            openDoorImage.MakeTransparent();
-            closedDoorImage.MakeTransparent();
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             Splash.Hide();
             Show();
-            LoadStaticFiles();
             Activate();
         }
 
@@ -205,14 +193,16 @@ namespace WinForms2
             {
                 for (int j = 0; j < n; j++)
                 {
-                    a = r.Next(1, 3);
-                    if (a == 1)
+                    a = r.Next(0, 101);
+                    if ((i > 0 && bgColors[i - 1, j] == Color.Maroon) || (j > 0 && bgColors[i, j - 1] == Color.Maroon))
                     {
-                        bgColors[i, j] = Color.ForestGreen;
+                        if (a < 50) bgColors[i, j] = Color.Maroon;
+                        else bgColors[i, j] = Color.ForestGreen;
                     }
                     else
                     {
-                        bgColors[i, j] = Color.Maroon;
+                        if (a < 20) bgColors[i, j] = Color.Maroon;
+                        else bgColors[i, j] = Color.ForestGreen;
                     }
                 }
             }
@@ -298,6 +288,7 @@ namespace WinForms2
             else
             {
                 editModeToolStripMenuItem.Text = "Edit mode";
+                tableLayoutPanel1.ContextMenu = new ContextMenu();
                 menuStrip1.BackColor = Color.Transparent;
                 menuStrip1.Items.Remove(left);
             }
@@ -314,23 +305,54 @@ namespace WinForms2
             ((ToolStripMenuItem)left.DropDownItems[0]).Checked = false;
         }
 
-        private void tableLayoutPanel1_MouseClick(object sender, EventArgs e)
+        private void tableLayoutPanel1_MouseUp(object sender, MouseEventArgs e)
         {
-            if (editModeToolStripMenuItem.Text == "Game mode")
+            if ((editModeToolStripMenuItem.Text == "Game mode") && (e.Button == MouseButtons.Left))
             {
                 Point p = tableLayoutPanel1.PointToClient(Cursor.Position);
-                if (((ToolStripMenuItem)left.DropDownItems[0]).Checked == true) bgColors[getColumn(p), getRow(p)] = Color.ForestGreen;
-                if (((ToolStripMenuItem)left.DropDownItems[1]).Checked == true) bgColors[getColumn(p), getRow(p)] = Color.Maroon;
+                if (((ToolStripMenuItem)left.DropDownItems[0]).Checked == true)
+                    bgColors[getColumn(p), getRow(p)] = Color.ForestGreen;
+                if (((ToolStripMenuItem)left.DropDownItems[1]).Checked == true)
+                    bgColors[getColumn(p), getRow(p)] = Color.Maroon;
                 tableLayoutPanel1.Refresh();
+            }
+            if ((e.Button == MouseButtons.Right)&& (editModeToolStripMenuItem.Text == "Game mode"))
+            {
+                cm = new ContextMenuStrip();
+                cm.Items.Add("Knight");
+                cm.Items.Add("Key");
+                cm.Items.Add("Door");
+                cm.Items[0].Click += new EventHandler(editKnight_Click);
+                cm.Items[1].Click += new EventHandler(editKey_Click);
+                cm.Items[2].Click += new EventHandler(editDoor_Click);
+                tableLayoutPanel1.ContextMenuStrip = cm;
+                editclickpos = new Point(e.X, e.Y);
+                cm.Show(this, editclickpos);
             }
         }
 
-        private void tableLayoutPanel1_MouseUp(object sender, MouseEventArgs e)
+        private void editKnight_Click(object sender, EventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
-            {
-                //edit mode right click
-            }
+            knight_y = getRow(editclickpos);
+            knight_x = getColumn(editclickpos);
+            bgColors[knight_x, knight_y] = Color.ForestGreen;
+            tableLayoutPanel1.Refresh();
+        }
+
+        private void editKey_Click(object sender, EventArgs e)
+        {
+            key_y = getRow(editclickpos);
+            key_x = getColumn(editclickpos);
+            bgColors[key_x, key_y] = Color.ForestGreen;
+            tableLayoutPanel1.Refresh();
+        }
+
+        private void editDoor_Click(object sender, EventArgs e)
+        {
+            door_y = getRow(editclickpos);
+            door_x = getColumn(editclickpos);
+            bgColors[door_x, door_y] = Color.ForestGreen;
+            tableLayoutPanel1.Refresh();
         }
 
         public int getColumn(Point point)

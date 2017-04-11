@@ -117,7 +117,6 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(523, 353);
             this.tableLayoutPanel1.TabIndex = 1;
             this.tableLayoutPanel1.CellPaint += new System.Windows.Forms.TableLayoutCellPaintEventHandler(this.tableLayoutPanel1_CellPaint);
-            this.tableLayoutPanel1.Click += new System.EventHandler(this.tableLayoutPanel1_MouseClick);
             this.tableLayoutPanel1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tableLayoutPanel1_MouseUp);
             // 
             // Form1
